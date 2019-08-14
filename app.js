@@ -1,40 +1,34 @@
-const Koa = require('koa')
-const app = new Koa()
+const Koa = require('koa');
+const cors = require('koa2-cors');
+const error = require('koa-json-error');
+const parameter =require('koa-parameter');
+const mongoose = require('mongoose');
+const path = require('path');
+const koaBody = require('koa-body');
+const logger = require('koa-logger');
 
-const json = require('koa-json')
-const onerror = require('koa-onerror')
-const bodyparser = require('koa-bodyparser')
-const logger = require('koa-logger')
+const routing = require('./routes');
+const { connectionStr } = require('./config');
 
-const index = require('./routes/index')
-const users = require('./routes/users')
+mongoose.connect(connectionStr, { useNewUrlParser: true }, () => console.log('MongoDB 连接成功了！'));
+mongoose.connection.on('error', console.error);
 
-// error handler
-onerror(app)
+const app = new Koa();
+app
+  .use(cors())
+  .use(error({
+    postFormat: (e, { stack, ...rest }) => process.env.NODE_ENV === 'production' ? rest : { stack, ...rest }
+  }))
+  .use(logger())
+  .use(koaBody({
+    multipart: true,
+    formidable: {
+      uploadDir: path.join(__dirname, '/public/uploads'),
+      keepExtensions: true,
+    }
+  }));
 
-// middlewares
-app.use(bodyparser({
-  enableTypes:['json', 'form', 'text']
-}))
-app.use(json())
-app.use(logger())
-app.use(require('koa-static')(__dirname + '/public'))
-
-// logger
-app.use(async (ctx, next) => {
-  const start = new Date()
-  await next()
-  const ms = new Date() - start
-  console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
-})
-
-// routes
-app.use(index.routes(), index.allowedMethods())
-app.use(users.routes(), users.allowedMethods())
-
-// error-handling
-app.on('error', (err, ctx) => {
-  console.error('server error', err, ctx)
-});
+app.use(parameter(app));
+routing(app);
 
 module.exports = app

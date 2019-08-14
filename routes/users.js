@@ -1,12 +1,25 @@
-const router = require('koa-router')()
+const Router = require('koa-router');
+const router = new Router({ prefix: '/users'});
+const jwt = require('koa-jwt');
 
-const UserController = require('../controllers/users')
+const { 
+    updateUser,
+    getUserList,
+    deleteUser: del,
+    checkOwner
+
+
+} = require('../controllers/users');
+
+const { TOKEN_SECRET } = require('../config');
+
+const auth = jwt({ TOKEN_SECRET });
 
 //更新用户信息
-router.put('/:id',UserController.updateUser)
+router.put('/:id',updateUser);
 //获取用户列表
-router.get('/getUserList', UserController.getUserList)
+router.get('/getUserList', getUserList);
 //删除用户
-router.delete('delete', UserController.delete)
+router.delete('delete', auth, checkOwner, del);
 
-module.exports = router
+module.exports = router;
