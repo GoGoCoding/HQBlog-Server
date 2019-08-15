@@ -16,10 +16,10 @@ const { TOKEN_SECRET } = require('../config');
 const auth = jwt({ TOKEN_SECRET });
 
 //更新用户信息
-router.put('/:id',updateUser);
+router.patch('/:id',updateUser);
 //获取用户列表
-router.get('/getUserList', getUserList);
+router.get('/getUserList',auth, getUserList);
 //删除用户
-router.delete('delete', auth, checkOwner, del);
+router.delete('/delete', auth, checkOwner, del);
 
 module.exports = router;

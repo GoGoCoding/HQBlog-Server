@@ -1,13 +1,13 @@
-const db = require('./db');
-const isDev = process.env.NODE_ENV === 'development';
+// const isDev = process.env.NODE_ENV === 'development';
+const isDev = true;
 
 module.exports = {
-  db,
+
   SALT_WORK_FACTOR: 10, // 生成salt的迭代次数
   TOKEN_SECRET: 'hq-blog',
   TOKEN_EXPIRESIN: '720h', // token 有效期
 
-  connectionStr: 'mongodb+srv://haoqi:tyhwanan@cluster0-gj586.mongodb.net/test?retryWrites=true&w=majority',
+  connectionStr: isDev ? 'mongodb://39.107.51.59:27017/test?retryWrites=true&w=majority' : 'mongodb+srv://haoqi:tyhwanan@cluster0-gj586.mongodb.net/test?retryWrites=true&w=majority' 
 //   ENABLE_EMAIL_NOTICE: false, // 是否开启邮件通知功能 
   // 邮箱的 config 
 //   emailTransporterConfig: {
