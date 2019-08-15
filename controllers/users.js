@@ -1,4 +1,4 @@
-const User = require('../models/users_model');
+const User = require('../models/users');
 const { encrypt, comparePassword } = require('../lib/bcrypt');
 const { createToken } = require('../lib/token')
 
