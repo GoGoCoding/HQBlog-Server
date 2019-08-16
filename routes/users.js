@@ -13,7 +13,7 @@ const {
 
 const { TOKEN_SECRET } = require('../config');
 
-const auth = jwt({ TOKEN_SECRET });
+const auth = jwt({ secret:  TOKEN_SECRET });
 
 //更新用户信息
 router.patch('/:id',updateUser);

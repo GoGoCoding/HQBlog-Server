@@ -10,8 +10,8 @@ const {
     deleteArticle: del
 } = require('../controllers/articles');
 
-const { secret } = require('../config');
-const auth = jwt({ secret });
+const { TOKEN_SECRET } = require('../config');
+const auth = jwt({ secret: TOKEN_SECRET });
 
 router.post('/create',auth, create);
 router.patch('/update', auth, update);

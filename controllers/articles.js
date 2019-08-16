@@ -41,3 +41,4 @@ class ArticlesCtl {
 }
 
 module.exports = new ArticlesCtl();
+

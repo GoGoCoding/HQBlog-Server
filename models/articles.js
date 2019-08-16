@@ -1,7 +1,7 @@
 const mogoose = require('mongoose');
 const { Schema, model } = mogoose;
 
-const articlesSchema = new Schema({
+const articleSchema = new Schema({
     __v : { type: Number, select:false },
     title : { 
         type: String,
@@ -20,4 +20,4 @@ const articlesSchema = new Schema({
 
 }, { timestamps: true });
 
-module.exports = model('Articles', articlesSchema);
+module.exports = model('Article', articleSchema);

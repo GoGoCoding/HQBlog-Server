@@ -13,16 +13,16 @@ class UserCtl {
         const { username, password, email } = ctx.request.body;
 
         let response; 
-        const result = await UserModel.findOne({ email })
+        const result = await User.findOne({ email })
         if(result) {
             ctx.throw( 409,'邮箱已被注册' ); 
         }else {
-            const user = await UserModel.findOne({ username });
+            const user = await User.findOne({ username });
             if (user) { 
                 ctx.throw(409, '用户名已被占用')
             }else {
                 const saltPassword = await encrypt(password);
-                await UserModel({ username, password: saltPassword, email }).save();
+                await User({ username, password: saltPassword, email }).save();
                 response = { code:200, message:"注册成功" };
             }
         }
@@ -38,14 +38,26 @@ class UserCtl {
         });
         const { account, password } = ctx.request.body;
         
-        const user = await UserModel.findOne( { username: account, email: account} );
+        const user = await User.findOne( 
+            {
+                $or : [
+                    {username: account },
+                    {email: account}
+                ]
+            },
+            {
+                username:1,
+                password:1,
+                auth:1,
+                email:1,
+            });
+        // const user = await User.where()
         if (!user) { ctx.throw(401, '用户名或密码不正确'); }
 
         const isMatch = await comparePassword(password, user.password);
         if (!isMatch) { ctx.throw(401, '用户名或密码不正确'); }
 
-        const { id, auth } = user;
-        const token = createToken({ username: user.username, userId: id, auth: user.auth, email: user.email});
+        const token = createToken({ username: user.username, userId: user.id, auth: user.auth, email: user.email});
 
         let response = { code: 200, message: '登录成功', username:user.username, auth: user.auth, token: token };
         ctx.body = response;
@@ -62,14 +74,14 @@ class UserCtl {
             const isMatch = await comparePassword(oldPassword, user.password);
             if (!isMatch) { ctx.throw(401, '原密码不正确'); }
 
-            const eamilResult = await UserModel.findOne({ email });
+            const eamilResult = await User.findOne({ email });
             if (eamilResult.id === user.id || !eamilResult){
                 continue ;
             }else { 
                 ctx.throw( 409,'邮箱已被注册' ); 
             }
             
-            const userResult = await UserModel.findOne({ username });
+            const userResult = await User.findOne({ username });
             if (userResult.id === user.id || !userResult) { 
                 continue ;
             }else {
@@ -109,10 +121,9 @@ class UserCtl {
 
     //删除用户
     async deleteUser(ctx) {
-        let { userId} = ctx.query;
-        userId = parseInt(userId);
 
-        await User.findByIdAndRemove(ctx.params.id);
+        const { userId } = ctx.query;
+        const user = await User.findByIdAndRemove(userId);
         if (!user) { ctx.throw(404, '用户不存在'); }
         let response = { code: 204, message: '成功删除用户' };
         ctx.body = response;
