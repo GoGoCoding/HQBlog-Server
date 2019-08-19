@@ -1,4 +1,6 @@
-const Articles = require('../models/articles');
+const Article = require('../models/articles');
+const Tag = require('../models/tags');
+
 
 class ArticlesCtl {
 
@@ -7,8 +9,15 @@ class ArticlesCtl {
       ctx.verifyParams({
           title: { type: 'string', required: true }
       })
-    const { title, content, categories, tags } = ctx.request.body;
-
+    const { title, content, categories, tags, author } = ctx.request.body;
+    
+    const data = await Article({
+      title: title,
+      content: content,
+      tags:tags,
+      author: author
+    }).save();
+    
     ctx.body = { code: 200, message: '成功创建文章' };
   }
 
@@ -30,7 +39,29 @@ class ArticlesCtl {
    * ...
    */
   async getArticleList(ctx) {
-    ctx.body = { code: 200, message: '查询文章列表成功' };
+    let { page = 1, pageSize = 10, title, tag, category, rangTime , fetchTop } = ctx.query;
+    const offset = (page - 1) * pageSize;
+    let queryParams = {};
+    let order = [['createdAt', 'DESC']];
+
+    if(fetchTop === 'true' ){
+      queryParams.showOrder = 1;
+      order = [['updatedAt', 'DESC']];
+    }
+    
+    const tagFilter = tag ? { name : tag} :{};
+    const categoryFilter = category ? { name : category } : {};
+
+    pageSize = parseInt(pageSize);
+
+    const data = await Article.find({})
+    .sort( {id : 1} )
+    .skip(offset)
+    .limit(pageSize)
+    .populate('author tags');
+
+
+    ctx.body = { code: 200, message: '查询文章列表成功',data: data };
 
   }
 

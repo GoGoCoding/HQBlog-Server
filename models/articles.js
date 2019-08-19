@@ -14,9 +14,8 @@ const articleSchema = new Schema({
     showOrder: {
         type: Number,
     },
-    tags: {
-        type: [ { type : Schema.Types.ObjectId , ref: 'tag'}],
-    }
+    author:
+        { type : Schema.Types.ObjectId , ref: 'User' }
 
 }, { timestamps: true });
 

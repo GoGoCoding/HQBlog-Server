@@ -24,10 +24,10 @@ module.exports = (app) => {
   router.post('/login', login);
   router.post('/register', register);
 
-  // 获取所有标签以及每个标签的总数
-router.get('/tags/getList', getTags)
-//根据标签的名字获取文章
-router.get('/tags/getArticles', getArticlesByTag)
+//   // 获取所有标签以及每个标签的总数
+// router.get('/tags/getList', getTags)
+// //根据标签的名字获取文章
+// router.get('/tags/getArticles', getArticlesByTag)
 
 
   router.get('/', async ctx => {
