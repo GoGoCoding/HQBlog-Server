@@ -14,8 +14,22 @@ const articleSchema = new Schema({
     showOrder: {
         type: Number,
     },
-    author:
-        { type : Schema.Types.ObjectId , ref: 'User' }
+
+    author:{ 
+        type : Schema.Types.ObjectId , 
+        ref: 'User' 
+    },
+
+    category:{
+        type: Schema.Types.ObjectId,
+        ref: 'Category'
+    },
+
+    tags: [{
+        type:Schema.Types.ObjectId,
+        ref:'Tag'
+    }]
+
 
 }, { timestamps: true });
 

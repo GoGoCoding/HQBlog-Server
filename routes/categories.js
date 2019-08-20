@@ -1,17 +1,17 @@
-const Router = require('koa-router');
-const router = new Router( { prefix:  '/tags'} );
+Router = require('koa-router');
+router =  new Router({ prefix: '/categories'});
+
 const jwt = require('koa-jwt');
 
 const {
     create,
-    getTags
-} = require('../controllers/tags');
-
+    getCategories
+} = require('../controllers/categories');
 
 const { TOKEN_SECRET } = require('../config');
 const auth = jwt({ secret: TOKEN_SECRET });
 
 router.post('/create',auth, create);
-router.get('/getTags', getTags);
+router.get('/getCategories', getCategories);
 
 module.exports = router;

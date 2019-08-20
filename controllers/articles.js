@@ -6,9 +6,9 @@ class ArticlesCtl {
 
     // 创建文章
   async create(ctx) {
-      ctx.verifyParams({
-          title: { type: 'string', required: true }
-      })
+    ctx.verifyParams({
+      title: { type: 'string', required: true }
+    })
     const { title, content, categories, tags, author } = ctx.request.body;
     
     const data = await Article({
@@ -26,9 +26,26 @@ class ArticlesCtl {
     ctx.body = { code: 200, message: '文章修改成功' };
   }
 
+  //根据tag获取Articles
+  async getArticlesByTag(ctx) {
+    let { page = 1, pageSize = 15, name } = ctx.query;
+    const offset = (page - 1) * pageSize;
+
+    const data = await Article.find({}, 'id title createdAt')
+                                .sort( { id:1 } )
+                                .skip(offset)
+                                .limit(pageSize);
+    
+    ctx.body = { code: 200, message: '根据tag获取Articles成功', data:data};
+  }
+
   // 获取文章详情
   async getArticleById(ctx) {
-    ctx.body = { code: 200, message: '获取文章详情成功' };
+    const { articleId } = ctx.require;
+
+    const data = await  Article.findById(articleId)
+                                .populate('author category tags');
+    ctx.body = { code: 200, message: '获取文章详情成功', data: data};
   }
 
   /**
@@ -58,7 +75,7 @@ class ArticlesCtl {
     .sort( {id : 1} )
     .skip(offset)
     .limit(pageSize)
-    .populate('author tags');
+    .populate('author category tags');
 
 
     ctx.body = { code: 200, message: '查询文章列表成功',data: data };

@@ -7,7 +7,8 @@ const {
     update,
     getArticleById,
     getArticleList,
-    deleteArticle: del
+    deleteArticle: del,
+    getArticlesByTag
 } = require('../controllers/articles');
 
 const { TOKEN_SECRET } = require('../config');
@@ -16,6 +17,7 @@ const auth = jwt({ secret: TOKEN_SECRET });
 router.post('/create',auth, create);
 router.patch('/update', auth, update);
 router.get('/get/:id',getArticleById);
+router.get('/getByTag/:id', getArticlesByTag);
 router.get('/getList', getArticleList);
 router.delete('/delete', del);
 
