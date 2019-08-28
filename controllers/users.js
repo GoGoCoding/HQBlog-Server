@@ -59,8 +59,12 @@ class UserCtl {
         if (!isMatch) { ctx.throw(401, '用户名或密码不正确'); }
 
         const token = createToken({ username: user.username, userId: user.id, auth: user.auth, email: user.email});
-
-        let response = { code: 200, message: '登录成功', username:user.username, auth: user.auth, token: token };
+        const data = {
+            pin: user._id,
+            username : user.username,
+            token:token
+        }
+        let response = { code: 200, message: '登录成功', data: data };
         ctx.body = response;
 
     }
